@@ -1,5 +1,6 @@
 package org.example.project.qdcore.ast
 
+import org.example.project.qdcore.util.mapParallel
 import org.example.project.qdcore.visitor.node.NodeVisitor
 
 /**
@@ -56,4 +57,4 @@ fun <T> List<Node>.acceptAll(visitor: NodeVisitor<T>): List<T> = map { it.accept
 fun <T> List<Node>.parallelAcceptAll(
     visitor: NodeVisitor<T>,
     minItems: Int = 50,
-): List<T> = map { it.accept(visitor) }
+): List<T> = mapParallel(minItems) { it.accept(visitor) }
