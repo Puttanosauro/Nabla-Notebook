@@ -14,3 +14,12 @@ Standard word processors struggle with complex STEM notation. This project solve
 ## 🚀 Current Status: Phase 1 (The Local Sandbox)
 We are actively building the single-player Kotlin WASM client.
 **Recent Milestone:** Performed a surgical "sledgehammer" port of the official `quarkdown-core` JVM compiler into pure Kotlin Multiplatform. We stripped out `java.io` file system dependencies and lobotomized JVM parallel streams to ensure the engine compiles natively for the web browser.
+
+## personal roadmap 
+so what i've done and what i need to do now:
+
+**what i have done:**
+* i have successfully grabbed the entirety of the regular QD-core and im working on refactoring it to fit my JVM-less need
+  * ive finished porting the ast package
+
+**what do i need to do:**
