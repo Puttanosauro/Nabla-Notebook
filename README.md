@@ -1,43 +1,22 @@
-This is a Kotlin Multiplatform project targeting Web, Server.
+# 🪐 Qwarkdown Sandbox
 
-* [/app/shared](./app/shared/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./app/shared/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./app/shared/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./app/shared/src/jvmMain/kotlin)
-    folder is the appropriate location.
+A lightweight, WebAssembly-ready port of the official [Quarkdown](https://github.com/iamgio/quarkdown) compiler.
 
-* [/core](./core/src) is for the code that will be shared between all targets in the project.
-  The most important subfolder is [commonMain](./core/src/commonMain/kotlin). If preferred, you
-  can add code to the platform-specific folders here too.
+## 🛠 What is this? (The Easy Explanation)
+Quarkdown is an incredible Markdown language with superpowers (math macros, variables, dynamic layouts). But there was one problem: **the official compiler was built for desktops and servers**. It relied heavily on Java file systems (`java.io`) and heavy multithreading (`java.util.streams`).
 
-* [/server](./server/src/main/kotlin) is for the Ktor server application.
+This project is a **Kotlin Multiplatform (KMP)** extraction. We took the official JVM compiler, ripped out the heavy Java dependencies, lobotomized the parallel processing, and made it purely String-based.
 
-### Running the apps
+**The Goal:** A lightning-fast, client-side web editor that compiles Quarkdown directly in the user's browser using WebAssembly (WASM)—no backend server required.
 
-Use the run configurations provided by the run widget in your IDE's toolbar. You can also use these commands and options:
+## 🚀 Current Status
+- [x] Ported the core AST, Lexer, and Parser.
+- [x] Stripped out `java.io.File` and hard drive dependencies.
+- [x] Lobotomized JVM parallel streams for sequential WASM compatibility.
+- [ ] Resolving final KMP UUID and Regex dependencies.
+- [ ] Hooking the engine up to a Compose Web UI.
 
-- Server: `./gradlew :server:run`
-- Web app:
-  - Wasm target (faster, modern browsers): `./gradlew :app:webApp:wasmJsBrowserDevelopmentRun`
-  - JS target (slower, supports older browsers): `./gradlew :app:webApp:jsBrowserDevelopmentRun`
-
-### Running tests
-
-Use the run button in your IDE's editor gutter, or run tests using Gradle tasks:
-
-- Server tests: `./gradlew :server:test`
-- Web tests:
-  - Wasm target: `./gradlew :app:shared:wasmJsTest`
-  - JS target: `./gradlew :app:shared:jsTest`
-
----
-
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html),
-[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform),
-[Kotlin/Wasm](https://kotl.in/wasm/)…
-
-We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
-If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).
+## 🧠 Architecture Notes for Future Me
+* **The Sledgehammer Strategy:** The core engine is highly interconnected (the AST relies on Context, which relies on Pipelines). The whole `core` folder was ported at once to avoid dependency hell.
+* **The `mapParallel` Hack:** True multithreading isn't well-supported in the browser yet. The `mapParallel` utility has been temporarily lobotomized to run standard sequential `.map()` loops. *(Note: We kept the `minItems` parameter in the signature just so the rest of the codebase wouldn't scream at us).*
+* **Expect/Actual:** Future server-side implementations can restore true parallelism using Kotlin's `expect/actual` modifiers.
