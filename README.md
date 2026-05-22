@@ -1,13 +1,26 @@
-# 🪐 Qwarkdown Collaborative Editor
+# 🪐 Quarkdown Collaborative Editor
 
-A real-time, WebAssembly-powered collaborative text editor tailored for physics, mathematics, and scientific papers.
+![Status](https://img.shields.io/badge/Status-Pre--Alpha_(Phase_1)-red)
 
-> **Note:** This project is currently in active development (Phase 1: Local Sandbox).
+A real-time, Kotlin Multiplatform-powered collaborative text editor tailored for physics, mathematics, and scientific papers.
+
+> [!CAUTION]
+> **Note:** This project is currently in an early stage of development (Phase 1: Local Sandbox). 
+>
+>*More info in a later paragraph*
 
 ## 🛠 Project Vision
-Modern word processors struggle with complex STEM notation, and professional typesetting tools can feel cumbersome for everyday drafting. This project serves as a bridge between the two.
+We are a "team" of just 2 STEM students that just wanted a system to write notes and share them reliably with friends or teacher, 
+but it is tragic how hard it is to find a system that reliably achieves it while also being usable by a normal human being.
 
-We provide an accessible, Google Docs-style collaborative environment for the [Quarkdown (.qd) language](https://github.com/iamgio/quarkdown). By offloading heavy computational rendering to the client via **WebAssembly (WASM)**, we deliver a latency-free editing experience while keeping the backend lightweight and self-hostable. Users can fluidly switch between a real-time, intuitive preview and the raw `.qd` source for full LaTeX-level control.
+What this project aims to achieve is a home-made fix:
+it is a conversion layer written in Kotlin Multiplatform for [Quarkdown (.qd) language](https://github.com/iamgio/quarkdown)
+that aims to provide a Google Docs-style collaborative environment with usable UI elements and buttons. **just like every platform like this should be!**
+
+It works by offloading heavy computational rendering to the client via **WebAssembly (WASM)** which allows for a lightweight and self-hostable backend.
+
+We wanted something where you don't have to compile a massive document just to see if your equation looks right. 
+You get a live preview alongside the raw `.qd` file, so you can tweak the code or use the UI buttons without breaking your flow
 
 ## 🏗 Architecture
 * **The Core:** Leverages the [Quarkdown](https://github.com/iamgio/quarkdown) ecosystem, ported to Kotlin Multiplatform (KMP/WASM) to enable high-performance client-side rendering.
@@ -16,7 +29,9 @@ We provide an accessible, Google Docs-style collaborative environment for the [Q
 * **Sync & Persistence:** CRDT-based synchronization for real-time collaboration, paired with a hybrid storage model (Redis for session caching, append-only logs for history, and SQL for final snapshots).
 
 ## 🛠 Development Roadmap
-We are currently in **Phase 1: The Local Sandbox**.
+We are currently working on **Phase 1 out of 7** of the development.
+
+Because of this everything might be changed going forwards
 ### Completed
 * Initiated port of `quarkdown-core` to Kotlin Multiplatform (KMP).
 * removed the JVM-specific dependencies from the KMP version:
@@ -61,3 +76,14 @@ What this approach achieves is a mostly seamless experience while editing and en
 | **CSL Citation Rendering** | Placeholder/Stubbed   | working                    | the numbering and citation wont fully work as intended, tho the placeholder are designed to be atleast readable |
 
 > **Note:** *We use abstraction via `commonMain` interfaces to ensure that features which cannot run in the browser can still be fully implemented on the server-side compiler for accurate final PDF/HTML rendering*
+
+# Was AI used for this project?
+to answer the question directly: **yes, generative AI was used during the development process**.
+
+As a team of just two people building a complex system that realistically demands a much larger team, using these tools was an unfortunate necessity just to keep up with the boilerplate and ship the project. 
+
+There is an inherent sadness in how predominant AI has become in creative and engineering spaces, often filling gaps that should belong to human hands. 
+
+But the saddest part of all is how difficult it has become to distinguish between genuine work and "AI SLOP", 
+because of this we want to emphasize that the AI was strictly treated as a tool for repetitive tasks. 
+Every architectural decision, the system design, the "what goes where," and the logic bridging WASM and the JVM was entirely conceived, supervised, driven or straight up written by us.
