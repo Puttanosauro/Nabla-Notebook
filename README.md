@@ -15,22 +15,6 @@ We provide an accessible, Google Docs-style collaborative environment for the [Q
 * **Backend:** Kotlin (Ktor) acting as a lightweight sync-router, document validator, and state manager.
 * **Sync & Persistence:** CRDT-based synchronization for real-time collaboration, paired with a hybrid storage model (Redis for session caching, append-only logs for history, and SQL for final snapshots).
 
-## 🧩 Technical Note: WASM & JVM Constraints
-WASM and the JVM don't exactly love one another. Consequently, many features available in the original QD code simply aren't supported in the WebAssembly port. To maintain a full, functional port, I’ve made the following design trade-offs:
-
-*   **"Lobotomized" Classes:** Many classes in the WASM version are stripped-down versions of their JVM counterparts to accommodate browser constraints.
-*   **Interface Abstraction:** This is achieved using Kotlin `interfaces` in `commonMain`.
-
-This approach provides a seamless developer experience while ensuring that our server-side HTML/PDF rendering remains robust and accurate.
-
-### Feature Parity & Limitations
-| Feature | Browser/WASM Behavior | Server-Side Implementation | Developer Note |
-| :--- | :--- | :--- | :--- |
-| **Multi-thread Rendering** | Stripped/Disabled | Pending | Browser-side overhead makes this negligible. |
-| **CSL Citation Rendering** | Stubbed/Placeholder | Pending | Logic is ready; placeholders ensure readability. |
-
-> **Note:** We use `commonMain` interfaces to ensure features that cannot run in the browser are still fully supported by the server-side compiler for final exports.
-
 ## 🛠 Development Roadmap
 We are currently in **Phase 1: The Local Sandbox**.
 ### Completed
