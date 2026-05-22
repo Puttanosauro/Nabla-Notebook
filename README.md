@@ -1,16 +1,35 @@
 # 🪐 Qwarkdown Collaborative Editor
 
 A real-time, WebAssembly-powered collaborative text editor tailored for physics, mathematics, and scientific papers.
+
 > **Note:** This project is currently in active development (Phase 1: Local Sandbox).
 
 ## 🛠 Project Vision
-Standard word processors (like Google Docs) struggle with the complexities of STEM notation. **Qwarkdown (.qd)** is a custom markup language designed to bridge this gap. By offloading heavy computational rendering to the client via **WebAssembly (WASM)**, we provide a latency-free editing experience while keeping our backend as a lightweight router for synchronization.
+Modern word processors struggle with complex STEM notation, and professional typesetting tools can feel cumbersome for everyday drafting. This project serves as a bridge between the two.
+
+We provide an accessible, Google Docs-style collaborative environment for the [Quarkdown (.qd) language](https://github.com/iamgio/quarkdown). By offloading heavy computational rendering to the client via **WebAssembly (WASM)**, we deliver a latency-free editing experience while keeping the backend lightweight and self-hostable. Users can fluidly switch between a real-time, intuitive preview and the raw `.qd` source for full LaTeX-level control.
 
 ## 🏗 Architecture
-* **Frontend:** Kotlin Multiplatform (WASM) handling local rendering with a two-tier system: real-time markdown preview and debounced math formula rendering.
-* **Backend:** Kotlin (Ktor) managing WebSocket connections and CRDT validation.
-* **Sync:** CRDT-based synchronization (e.g., Yjs) for mathematically safe, simultaneous multi-user editing.
-* **Persistence:** A hybrid approach using Redis for active session caching, an append-only log for version history, and SQL for snapshots.
+* **The Core:** Leverages the [Quarkdown](https://github.com/iamgio/quarkdown) ecosystem, ported to Kotlin Multiplatform (KMP/WASM) to enable high-performance client-side rendering.
+* **Frontend:** A dual-mode interface offering real-time visual rendering alongside raw `.qd` source control.
+* **Backend:** Kotlin (Ktor) acting as a lightweight sync-router, document validator, and state manager.
+* **Sync & Persistence:** CRDT-based synchronization for real-time collaboration, paired with a hybrid storage model (Redis for session caching, append-only logs for history, and SQL for final snapshots).
+
+## 🧩 Technical Note: WASM & JVM Constraints
+WASM and the JVM don't exactly love one another. Consequently, many features available in the original QD code simply aren't supported in the WebAssembly port. To maintain a full, functional port, I’ve made the following design trade-offs:
+
+*   **"Lobotomized" Classes:** Many classes in the WASM version are stripped-down versions of their JVM counterparts to accommodate browser constraints.
+*   **Interface Abstraction:** This is achieved using Kotlin `interfaces` in `commonMain`.
+
+This approach provides a seamless developer experience while ensuring that our server-side HTML/PDF rendering remains robust and accurate.
+
+### Feature Parity & Limitations
+| Feature | Browser/WASM Behavior | Server-Side Implementation | Developer Note |
+| :--- | :--- | :--- | :--- |
+| **Multi-thread Rendering** | Stripped/Disabled | Pending | Browser-side overhead makes this negligible. |
+| **CSL Citation Rendering** | Stubbed/Placeholder | Pending | Logic is ready; placeholders ensure readability. |
+
+> **Note:** We use `commonMain` interfaces to ensure features that cannot run in the browser are still fully supported by the server-side compiler for final exports.
 
 ## 🛠 Development Roadmap
 We are currently in **Phase 1: The Local Sandbox**.
