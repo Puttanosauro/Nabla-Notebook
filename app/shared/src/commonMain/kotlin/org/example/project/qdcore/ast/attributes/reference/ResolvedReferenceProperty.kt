@@ -18,7 +18,7 @@ data class ResolvedReferenceProperty<R, D>(
     class Key<R, D> : Property.Key<ResolvedReference<R, D>> {
         override fun equals(other: Any?): Boolean = other is Key<*, *>
 
-        override fun hashCode(): Int = Key::class.java.hashCode()
+        override fun hashCode(): Int = this::class.hashCode()
     }
 
     override val key = Key<R, D>()
