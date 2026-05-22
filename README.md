@@ -19,10 +19,32 @@ We provide an accessible, Google Docs-style collaborative environment for the [Q
 We are currently in **Phase 1: The Local Sandbox**.
 ### Completed
 * Initiated port of `quarkdown-core` to Kotlin Multiplatform (KMP).
-* Refactored `ast` package to remove JVM-specific dependencies (`java.io`, thread pools).
+* removed the JVM-specific dependencies from the KMP version:
+  * Refactored `ast` package to remove JVM-specific dependencies (`java.io`, thread pools).
+  * Refactored `bibliography` package to remove JVM-specific dependencies (`java.io`).
 
 ### In Progress / Next Steps
-//todo
+To finish phase 1 we need to:
+* finish the port of of `quarkdown-core` to Kotlin Multiplatform (KMP), missing:
+  * [context](app/shared/src/commonMain/kotlin/org/example/project/qdcore/context)
+  * [document](app/shared/src/commonMain/kotlin/org/example/project/qdcore/document)
+  * [flavor](app/shared/src/commonMain/kotlin/org/example/project/qdcore/flavor)
+  * [function](app/shared/src/commonMain/kotlin/org/example/project/qdcore/function)
+  * [graph](app/shared/src/commonMain/kotlin/org/example/project/qdcore/graph)
+  * [lexer](app/shared/src/commonMain/kotlin/org/example/project/qdcore/lexer)
+  * [localization](app/shared/src/commonMain/kotlin/org/example/project/qdcore/localization)
+  * [log](app/shared/src/commonMain/kotlin/org/example/project/qdcore/log)
+  * [media](app/shared/src/commonMain/kotlin/org/example/project/qdcore/media)
+  * [misc](app/shared/src/commonMain/kotlin/org/example/project/qdcore/misc)
+  * [parser](app/shared/src/commonMain/kotlin/org/example/project/qdcore/parser)
+  * [permissions](app/shared/src/commonMain/kotlin/org/example/project/qdcore/permissions)
+  * [pipeline](app/shared/src/commonMain/kotlin/org/example/project/qdcore/pipeline)
+  * [property](app/shared/src/commonMain/kotlin/org/example/project/qdcore/property)
+  * [rendering](app/shared/src/commonMain/kotlin/org/example/project/qdcore/rendering)
+  * [template](app/shared/src/commonMain/kotlin/org/example/project/qdcore/template)
+  * [util](app/shared/src/commonMain/kotlin/org/example/project/qdcore/util)
+  * [visitor](app/shared/src/commonMain/kotlin/org/example/project/qdcore/visitor)
+  
 ## 🧩 Technical Note:
 WASM and the JVM don't exactly love one another.
 Because of this, many features available in the original QD (qwardwon) code simply aren't supported in the WebAssembly port
