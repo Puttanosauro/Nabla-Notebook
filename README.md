@@ -58,6 +58,6 @@ What this approach achieves is a mostly seamless experience while editing and en
 | Feature                    | Browser/WASM Behavior | Server-Side Implementation | developer comment                                                                                               |
 |:---------------------------|:----------------------|:---------------------------|:----------------------------------------------------------------------------------------------------------------|
 | **Multi-thread Rendering** | Stripped/Disabled     | still missing              | in a web page this is mostly useless and the difference is barely notable                                       |
-| **CSL Citation Rendering** | Placeholder/Stubbed   | still missing              | the numbering and citation wont fully work as intended, tho the placeholder are designed to be atleast readable |
+| **CSL Citation Rendering** | Placeholder/Stubbed   | working                    | the numbering and citation wont fully work as intended, tho the placeholder are designed to be atleast readable |
 
 > **Note:** *We use abstraction via `commonMain` interfaces to ensure that features which cannot run in the browser can still be fully implemented on the server-side compiler for accurate final PDF/HTML rendering*
