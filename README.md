@@ -1,22 +1,16 @@
-# 🪐 Qwarkdown Sandbox
+# 🪐 Qwarkdown Collaborative Editor
 
-A lightweight, WebAssembly-ready port of the official [Quarkdown](https://github.com/iamgio/quarkdown) compiler.
+A real-time, WebAssembly-powered collaborative text editor tailored for physics, mathematics, and scientific papers.
 
-## 🛠 What is this? (The Easy Explanation)
-Quarkdown is an incredible Markdown language with superpowers (math macros, variables, dynamic layouts). But there was one problem: **the official compiler was built for desktops and servers**. It relied heavily on Java file systems (`java.io`) and heavy multithreading (`java.util.streams`).
+## 🛠 Project Vision
+Standard word processors struggle with complex STEM notation. This project solves that by utilizing **Qwarkdown** (`.qd`), a custom markup language with superpowers. By offloading the heavy computational rendering to the user's browser via WebAssembly (WASM), we ensure a lightning-fast, latency-free editing experience, while the central server acts as a lightweight router for document state synchronization.
 
-This project is a **Kotlin Multiplatform (KMP)** extraction. We took the official JVM compiler, ripped out the heavy Java dependencies, lobotomized the parallel processing, and made it purely String-based.
+## 🏗 System Architecture
+* **Frontend (WASM):** Kotlin Multiplatform client handling local rendering and a two-tier UI (real-time Markdown + debounced math formula rendering).
+* **Backend (Ktor):** Kotlin server managing WebSockets, validating CRDT updates, and broadcasting changes.
+* **Synchronization:** CRDTs (Conflict-free Replicated Data Types) for mathematically safe, simultaneous multi-user editing.
+* **Storage Layer:** Redis (active document caching), Git-like append-only DB (version history and deltas), and Relational SQL (snapshots and user data).
 
-**The Goal:** A lightning-fast, client-side web editor that compiles Quarkdown directly in the user's browser using WebAssembly (WASM)—no backend server required.
-
-## 🚀 Current Status
-- [x] Ported the core AST, Lexer, and Parser.
-- [x] Stripped out `java.io.File` and hard drive dependencies.
-- [x] Lobotomized JVM parallel streams for sequential WASM compatibility.
-- [ ] Resolving final KMP UUID and Regex dependencies.
-- [ ] Hooking the engine up to a Compose Web UI.
-
-## 🧠 Architecture Notes for Future Me
-* **The Sledgehammer Strategy:** The core engine is highly interconnected (the AST relies on Context, which relies on Pipelines). The whole `core` folder was ported at once to avoid dependency hell.
-* **The `mapParallel` Hack:** True multithreading isn't well-supported in the browser yet. The `mapParallel` utility has been temporarily lobotomized to run standard sequential `.map()` loops. *(Note: We kept the `minItems` parameter in the signature just so the rest of the codebase wouldn't scream at us).*
-* **Expect/Actual:** Future server-side implementations can restore true parallelism using Kotlin's `expect/actual` modifiers.
+## 🚀 Current Status: Phase 1 (The Local Sandbox)
+We are actively building the single-player Kotlin WASM client.
+**Recent Milestone:** Performed a surgical "sledgehammer" port of the official `quarkdown-core` JVM compiler into pure Kotlin Multiplatform. We stripped out `java.io` file system dependencies and lobotomized JVM parallel streams to ensure the engine compiles natively for the web browser.
