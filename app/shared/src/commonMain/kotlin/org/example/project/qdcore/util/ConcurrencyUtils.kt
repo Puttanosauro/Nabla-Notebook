@@ -4,6 +4,7 @@ package org.example.project.qdcore.util
 //we do not have any form of parallel mapping
 //but if i dont add this line the code screams at my face
 //so given that i dont want to remap half of the functions, i just keep a useless variable
+
 private const val DEFAULT_MIN_ITEMS_FOR_PARALLELISM = 4
 
 /**

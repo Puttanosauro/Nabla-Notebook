@@ -1,10 +1,10 @@
 # 🪐 Quarkdown Collaborative Editor
 
-![Status](https://img.shields.io/badge/Status-Pre--Alpha_(Phase_1)-red)
+![Status](https://img.shields.io/badge/Status-Pre--Alpha_(Phase_1)-red) [![License: AGPLv3](https://img.shields.io/badge/License-AGPLv3-blue)](LICENSE)
 
 A real-time, Kotlin Multiplatform-powered collaborative text editor tailored for physics, mathematics, and scientific papers.
 
-> [!CAUTION]
+> [!WARNING]
 > **Note:** This project is currently in an early stage of development (Phase 1: Local Sandbox). 
 >
 >*More info in a later paragraph*
@@ -21,6 +21,24 @@ It works by offloading heavy computational rendering to the client via **WebAsse
 
 We wanted something where you don't have to compile a massive document just to see if your equation looks right. 
 You get a live preview alongside the raw `.qd` file, so you can tweak the code or use the UI buttons without breaking your flow
+
+### Why Quarkdown?
+Standard Markdown breaks down when handling complex scientific papers. 
+Quarkdown solves this natively, which is why we chose it as our foundation. 
+
+For more information about Quarkdown and `.qd` we recommend checking out [the original repo](https://github.com/iamgio/quarkdown) 
+
+
+## Getting Started *(Please Don't)*
+**TL;DR: Do not try to run this yet. It is completely broken, and we know it.**
+
+Right now, this repository serves strictly as a version control backup for our active development. 
+We are right in the middle of tearing out JVM dependencies and rewriting core logic for WASM. 
+If you try to clone and build this right now, you will only be met with something close to 400 compiler errors, 
+missing files and other problems I myself am yet to discover.
+
+Once we actually have a functional local sandbox we will update this section with real build instructions. 
+Until then, feel free to look at the code, but don't expect it to compile!
 
 ## 🏗 Architecture
 * **The Core:** Leverages the [Quarkdown](https://github.com/iamgio/quarkdown) ecosystem, ported to Kotlin Multiplatform (KMP/WASM) to enable high-performance client-side rendering.
@@ -62,7 +80,7 @@ To finish phase 1 we need to:
   
 ## 🧩 Technical Note:
 WASM and the JVM don't exactly love one another.
-Because of this, many features available in the original QD (qwardwon) code simply aren't supported in the WebAssembly port
+Because of this, many features available in the original QD (quardwon) code simply aren't supported in the WebAssembly port
 
 To maintain a full, functional port, I’ve had to make some compromises
   * **"Lobotomized" Classes:** Many classes in the WASM version are stripped-down versions of their JVM counterparts and might behave slightly differently than what standard QD does.
@@ -70,10 +88,12 @@ To maintain a full, functional port, I’ve had to make some compromises
 
 What this approach achieves is a mostly seamless experience while editing and ensuring at the same time that the server HTML/PDF renders are accurate
 ### Feature Parity & Limitations
-| Feature                    | Browser/WASM Behavior | Server-Side Implementation | developer comment                                                                                               |
-|:---------------------------|:----------------------|:---------------------------|:----------------------------------------------------------------------------------------------------------------|
-| **Multi-thread Rendering** | Stripped/Disabled     | still missing              | in a web page this is mostly useless and the difference is barely notable                                       |
-| **CSL Citation Rendering** | Placeholder/Stubbed   | working                    | the numbering and citation wont fully work as intended, tho the placeholder are designed to be atleast readable |
+| Feature                    | Browser/WASM Behavior | Server-Side Implementation | developer comment                                                                                                                                         |
+|:---------------------------|:----------------------|:---------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Multi-thread Rendering** | Stripped/Disabled     | still missing              | in a web page this is mostly useless and the difference is barely notable                                                                                 |
+| **CSL Citation Rendering** | Placeholder/Stubbed   | working                    | the numbering and citation wont fully work as intended, tho the placeholder are designed to be atleast readable                                           |
+| **IO Utilities**           | mostly working        | working                    | the structure has been rewritten in Kotlin to avoid JVM-hell, it should do for 99.9% of client use cases                                                  |
+| **CSEscape Html**          | Adapted               | working                    | the funcion relies on `org.apache.commons.text.StringEscapeUtils` because of this a full rewrite is near-impossible, but this should work well-ish enough |
 
 > **Note:** *We use abstraction via `commonMain` interfaces to ensure that features which cannot run in the browser can still be fully implemented on the server-side compiler for accurate final PDF/HTML rendering*
 
