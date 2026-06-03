@@ -1,5 +1,9 @@
 <div align="center">
-  <img src="assets/hero-white.png" alt="QOLLAB Notebook Logo" width="600" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/hero-white.png">
+    <source media="(prefers-color-scheme: light)" srcset="assets/hero.png">
+    <img alt="QOLLAB Notebook Logo" src="assets/hero-light.png" width="600">
+  </picture>
   <br/>
   <br/>
 
@@ -8,8 +12,6 @@
 
   <p><b>A real-time, Kotlin Multiplatform-powered collaborative text editor tailored for physics, mathematics, and scientific papers.</b></p>
 </div>
-
-<br/>
 
 > [!WARNING]
 > **Note:** This project is currently in an early stage of development (Phase 1: Local Sandbox). 
