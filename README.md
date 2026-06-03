@@ -1,8 +1,15 @@
-# 🪐 Quarkdown Collaborative Editor
+<div align="center">
+  <img src="assets/hero.png" alt="QOLLAB Notebook Logo" width="600" />
+  <br/>
+  <br/>
 
-![Status](https://img.shields.io/badge/Status-Pre--Alpha_(Phase_1)-red) [![License: AGPLv3](https://img.shields.io/badge/License-AGPLv3-blue)](LICENSE)
+  <img src="https://img.shields.io/badge/Status-Pre--Alpha_(Phase_1)-red" alt="Status" /> 
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-AGPLv3-blue" alt="License: AGPLv3" /></a>
 
-A real-time, Kotlin Multiplatform-powered collaborative text editor tailored for physics, mathematics, and scientific papers.
+  <p><b>A real-time, Kotlin Multiplatform-powered collaborative text editor tailored for physics, mathematics, and scientific papers.</b></p>
+</div>
+
+<br/>
 
 > [!WARNING]
 > **Note:** This project is currently in an early stage of development (Phase 1: Local Sandbox). 
