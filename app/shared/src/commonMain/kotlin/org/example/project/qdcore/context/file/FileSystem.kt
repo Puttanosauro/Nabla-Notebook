@@ -63,6 +63,12 @@ interface FileSystem {
     fun writeBytes(path: String, bytes: ByteArray) {
         //TODO: do this
     }
+    fun copy(soucePath: String, targetPath: String){
+        //TODO: do this
+    }
+    fun mkdirs(path: String){
+        //TODO: do this
+    }
 }
 
 /**

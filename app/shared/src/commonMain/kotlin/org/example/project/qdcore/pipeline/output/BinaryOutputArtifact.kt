@@ -22,7 +22,10 @@ data class BinaryOutputArtifact(
         fun fromFile(name: String, bytes: ByteArray): BinaryOutputArtifact =
             BinaryOutputArtifact(
                 name = name,
+
+                //! this throws an error it has no right to throw, the issue is just on the IDE cache so like...
                 content = bytes.toList(),
+
                 type = ArtifactType.AUTO,
             )
     }

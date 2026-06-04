@@ -16,7 +16,13 @@ kotlin {
         browser()
     }
 
+    /*jvm("desktop") {
+        compilations.all {
+            kotlinOptions.jvmTarget = "17"
+        }
+    }*/
 
+    //TODO once everything is ready uncomment this for the desktop app
     sourceSets {
         commonMain.dependencies {
             implementation(libs.compose.runtime)

@@ -1,8 +1,12 @@
 package org.example.project.qdcore.pipeline.output
 
 import org.example.project.qdcore.pipeline.error.IOPipelineException
-import org.example.project.qdcore.pipeline.output.LazyOutputArtifact.Companion.internal
-import kotlin.reflect.KClass
+
+/**
+ * Tells KMP: "Each platform (JVM, WASM) will provide its own specific way
+ * to read internal bundled resources (like default fonts or CSS)."
+ */
+expect fun readInternalResourceBytes(resource: String): List<Byte>?
 
 /**
  * Represents a [BinaryOutputArtifact] whose content is lazily loaded on demand (via [accept]).
@@ -15,51 +19,41 @@ data class LazyOutputArtifact(
     override val content: () -> List<Byte>,
     override val type: ArtifactType,
 ) : OutputArtifact<() -> List<Byte>> {
+
     // When visited, the content is loaded and a [BinaryOutputArtifact] is created and visited instead.
-    override fun <T> accept(visitor: OutputResourceVisitor<T>): T = visitor.visit(BinaryOutputArtifact(name, content(), type))
+    override fun <T> accept(visitor: OutputResourceVisitor<T>): T =
+        visitor.visit(BinaryOutputArtifact(name, content(), type))
 
     companion object {
-        private fun readInternalBytes(
-            resource: String,
-            referenceClass: KClass<*> = LazyOutputArtifact::class,
-        ): List<Byte>? =
-            referenceClass.java
-                .getResource(resource)
-                ?.readBytes()
-                ?.toList()
 
         /**
          * Creates a [LazyOutputArtifact] whose content is extracted from an internal resource.
          * @param resource path to the internal resource
          * @param name name of the resource (without file extensions)
          * @param type type of content the resource contains
-         * @param referenceClass reference classpath to use to retrieve the internal resource
          */
         fun internal(
             resource: String,
             name: String,
             type: ArtifactType,
-            referenceClass: KClass<*> = LazyOutputArtifact::class,
         ) = LazyOutputArtifact(
-            name,
+            name = name,
             content = {
-                readInternalBytes(resource, referenceClass)
+                readInternalResourceBytes(resource)
                     ?: throw IOPipelineException("Resource $resource not found")
             },
-            type,
+            type = type,
         )
 
         /**
          * Like [internal], but reads the resource instantly and returns `null` if it does not exist.
-         * @see internal
          */
         fun internalOrNull(
             resource: String,
             name: String,
             type: ArtifactType,
-            referenceClass: KClass<*> = LazyOutputArtifact::class,
         ): LazyOutputArtifact? =
-            readInternalBytes(resource, referenceClass)?.let {
+            readInternalResourceBytes(resource)?.let {
                 LazyOutputArtifact(name, content = { it }, type)
             }
     }

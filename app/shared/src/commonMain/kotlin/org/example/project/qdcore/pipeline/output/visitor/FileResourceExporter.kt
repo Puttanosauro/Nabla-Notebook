@@ -110,34 +110,25 @@ class FileResourceExporter(
      *
      * @return the copied file or directory
      */
-    override fun visit(artifact: FileReferenceOutputArtifact) =
-        File(location, artifact.name).also { target ->
-            if (!write) return@also
-
-            target.parentFile?.mkdirs()
-
-            if (artifact.useChecksumInvalidation) {
-                val checksumFile = target.resolveSibling("${target.name}.checksum")
-                val currentChecksum = IOUtils.computeChecksum(artifact.file)
-                val storedChecksum = checksumFile.takeIf { it.isFile }?.readText()
-
-                if (currentChecksum == storedChecksum && target.exists()) {
-                    Log.debug { "Skipping '${artifact.name}': checksum unchanged ($currentChecksum)" }
-                    return@also
-                }
-
-                Log.debug {
-                    "Copying '${artifact.name}': checksum changed " +
-                        "(stored=${storedChecksum ?: "<none>"}, current=$currentChecksum)"
-                }
-                copyFileOrDirectory(artifact.file, target)
-                checksumFile.writeText(currentChecksum)
-            } else {
-                copyFileOrDirectory(artifact.file, target)
-            }
+    override fun visit(artifact: FileReferenceOutputArtifact): String{
+        val targetPath = if (location.endsWith("/")) {
+            "$location${artifact.name}"
+        } else {
+            "$location/${artifact.name}"
         }
 
-    private fun copyFileOrDirectory(
+        if (write) {
+            fileSystem.copy(artifact.sourcePath, targetPath)
+        }
+
+        return targetPath
+
+    }
+
+
+    //USeless funcion, ill keep it here till shipment just in case
+    //TODO remove this once is no longer needed
+    /*private fun copyFileOrDirectory(
         source: File,
         target: File,
     ) {
@@ -146,28 +137,34 @@ class FileResourceExporter(
         } else {
             source.copyTo(target, overwrite = true)
         }
-    }
+    }*/
 
     /**
      * Saves an [OutputResourceGroup] to a directory which contains its nested files.
      * @return the directory file itself
      */
-    override fun visit(group: OutputResourceGroup): File {
-        val directory = File(location, group.fileNameWithoutExtension)
 
-        // The directory is not created if it has no content.
+    override fun visit(group: OutputResourceGroup): String {
+
+        val directoryPath = if (location.endsWith("/")) {
+            "$location${group.fileNameWithoutExtension}"
+        } else {
+            "$location/${group.fileNameWithoutExtension}"
+        }
+
         if (group.resources.isEmpty()) {
-            return directory
+            return directoryPath
         }
 
-        if (write) directory.mkdirs()
+        if (write) {
+            fileSystem.mkdirs(directoryPath)
+        }
 
-        // Saves the subfiles in the new directory.
         group.resources.forEach {
-            it.accept(FileResourceExporter(directory, write))
+            it.accept(FileResourceExporter(directoryPath, fileSystem, write))
         }
 
-        return directory
+        return directoryPath
     }
 }
 
@@ -176,4 +173,5 @@ class FileResourceExporter(
  * @see FileResourceExporter
  * @return the saved file
  */
-fun OutputResource.saveTo(directory: File): File = accept(FileResourceExporter(location = directory))
+fun OutputResource.saveTo(directoryPath: String, fileSystem: FileSystem): String =
+    accept(FileResourceExporter(location = directoryPath, fileSystem = fileSystem))

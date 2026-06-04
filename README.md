@@ -81,7 +81,6 @@ To finish phase 1 we need to:
   * [misc](app/shared/src/commonMain/kotlin/org/example/project/qdcore/misc)
   * [parser](app/shared/src/commonMain/kotlin/org/example/project/qdcore/parser)
   * [permissions](app/shared/src/commonMain/kotlin/org/example/project/qdcore/permissions)
-  * [pipeline](app/shared/src/commonMain/kotlin/org/example/project/qdcore/pipeline)
   * [property](app/shared/src/commonMain/kotlin/org/example/project/qdcore/property)
   * [rendering](app/shared/src/commonMain/kotlin/org/example/project/qdcore/rendering)
   * [template](app/shared/src/commonMain/kotlin/org/example/project/qdcore/template)
