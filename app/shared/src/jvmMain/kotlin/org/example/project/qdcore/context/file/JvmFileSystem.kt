@@ -4,7 +4,7 @@ import java.io.File
 
 /**
  * JVM-specific implementation of the FileSystem.
- * Allows the Ktorr server to utilize java.io.File
+ * Allows the Ktor server (and Desktop app) to utilize java.io.File
  */
 class JvmFileSystem(
     override val workingDirectory: String? = null,
@@ -33,11 +33,39 @@ class JvmFileSystem(
     }
 
 
-    override fun exists(path: String): Boolean {
+    override fun writeText(path: String, content: String) {
+        val file = File(path)
+        file.parentFile?.mkdirs() // Ensure parent folders exist
+        file.writeText(content)
+    }
+
+    override fun writeBytes(path: String, bytes: ByteArray) {
+        val file = File(path)
+        file.parentFile?.mkdirs()
+        file.writeBytes(bytes)
+    }
+
+    override fun copy(sourcePath: String, targetPath: String) {
+        val source = File(sourcePath)
+        val target = File(targetPath)
+        target.parentFile?.mkdirs()
+
+        if (source.isDirectory) {
+            source.copyRecursively(target, overwrite = true)
+        } else {
+            source.copyTo(target, overwrite = true)
+        }
+    }
+
+    override fun mkdirs(path: String) {
+        File(path).mkdirs()
+    }
+
+    fun exists(path: String): Boolean {
         return File(path).exists()
     }
 
-    override fun readText(path: String): String {
+    fun readText(path: String): String {
         return File(path).readText()
     }
 }

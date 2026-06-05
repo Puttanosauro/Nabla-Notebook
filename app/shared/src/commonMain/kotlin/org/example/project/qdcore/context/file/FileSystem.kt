@@ -1,95 +1,97 @@
 package org.example.project.qdcore.context.file
 
-import org.example.project.qdcore.util.IOUtils
-import java.io.File
-import java.nio.file.Path
-import kotlin.io.path.absolute
-
 /**
  * A file system abstraction which can retrieve files,
  * either absolutely or relative to a working directory.
  */
 interface FileSystem {
     /**
-     * The working directory of this file system.
-     * If not `null`, [resolve] will be able to resolve relative paths
-     * from this directory.
+     * The working directory string of this file system.
      */
-    val workingDirectory: File?
+    val workingDirectory: String?
 
-    /**
-     * The root file system that originated this one via [branch] calls.
-     * If `null`, this file system is the root.
-     */
     val root: FileSystem?
 
-    /**
-     * Whether this file system is the root one.
-     */
     val isRoot: Boolean
         get() = root == null
 
     /**
-     * Resolves a local file path, either absolutely or relatively from [workingDirectory].
-     * This does not perform any check for file existence.
-     * @param path absolute or relative file path to resolve
-     * @return the resolved file
+     * Resolves a local string path, either absolutely or relatively from [workingDirectory].
      */
-    fun resolve(path: String): File
+    fun resolve(path: String): String
+
+    fun branch(workingDirectory: String?): FileSystem
 
     /**
-     * Creates a new [FileSystem] branched from this one, with the given [workingDirectory].
-     *
-     * The [root] of the new file system is set to this file system if it has no root,
-     * or to this file system's root otherwise.
-     *
-     * @param workingDirectory new working directory
-     * @return the branched file system
+     * Computes the relative string path from this file system's [workingDirectory] to [other]'s.
      */
-    fun branch(workingDirectory: File?): FileSystem
+    fun relativePathTo(other: FileSystem): String?
 
-    /**
-     * Computes the relative path from this file system's [workingDirectory] to [other]'s.
-     * @param other the target file system
-     * @return the relative path from this working directory to the other,
-     *         or `null` if either working directory is `null`
-     */
-    fun relativePathTo(other: FileSystem): Path?
-
-    fun writeText(path: String, content: String) {
-        // TODO: do this
-    }
-
-    fun writeBytes(path: String, bytes: ByteArray) {
-        //TODO: do this
-    }
-    fun copy(soucePath: String, targetPath: String){
-        //TODO: do this
-    }
-    fun mkdirs(path: String){
-        //TODO: do this
-    }
+    // --- Actions ---
+    fun writeText(path: String, content: String)
+    fun writeBytes(path: String, bytes: ByteArray)
+    fun copy(sourcePath: String, targetPath: String)
+    fun mkdirs(path: String)
 }
 
 /**
  * A simple [FileSystem] implementation that resolves paths
- * based on an optional working directory.
+ * based on pure String manipulation, safe for KMP.
  */
 internal data class SimpleFileSystem(
-    override val workingDirectory: File? = null,
+    override val workingDirectory: String? = null,
     override val root: FileSystem? = null,
 ) : FileSystem {
-    override fun branch(workingDirectory: File?): FileSystem = SimpleFileSystem(workingDirectory, root ?: this)
 
-    override fun resolve(path: String): File = IOUtils.resolvePath(path, workingDirectory)
+    override fun branch(workingDirectory: String?): FileSystem =
+        SimpleFileSystem(workingDirectory, root ?: this)
 
-    override fun relativePathTo(other: FileSystem): Path? {
-        val from = this.workingDirectory?.toPath()?.absolute() ?: return null
-        val to = other.workingDirectory?.toPath()?.absolute() ?: return null
-        return try {
-            from.relativize(to)
-        } catch (_: IllegalArgumentException) {
-            null
+    override fun resolve(path: String): String {
+        if (workingDirectory == null) return path
+        if (path.startsWith("/")) return path // Already absolute
+
+        // Simple string concatenation for virtual paths
+        val dir = if (workingDirectory.endsWith("/")) workingDirectory else "$workingDirectory/"
+        return "$dir$path"
+    }
+
+    override fun relativePathTo(other: FileSystem): String? {
+        val from = this.workingDirectory ?: return null
+        val to = other.workingDirectory ?: return null
+
+        if (from == to) return ""
+
+        // Pure Kotlin string math to replace Java's Path.relativize()
+        val fromParts = from.trim('/').split("/")
+        val toParts = to.trim('/').split("/")
+
+        var commonPrefixLength = 0
+        val minLength = minOf(fromParts.size, toParts.size)
+        while (commonPrefixLength < minLength && fromParts[commonPrefixLength] == toParts[commonPrefixLength]) {
+            commonPrefixLength++
         }
+
+        val upDirs = fromParts.size - commonPrefixLength
+        val upString = "../".repeat(upDirs)
+        val downString = toParts.drop(commonPrefixLength).joinToString("/")
+
+        return "$upString$downString".removeSuffix("/")
+    }
+
+
+    override fun writeText(path: String, content: String) {
+        throw UnsupportedOperationException("SimpleFileSystem cannot perform physical I/O.")
+    }
+
+    override fun writeBytes(path: String, bytes: ByteArray) {
+        throw UnsupportedOperationException("SimpleFileSystem cannot perform physical I/O.")
+    }
+
+    override fun copy(sourcePath: String, targetPath: String) {
+        throw UnsupportedOperationException("SimpleFileSystem cannot perform physical I/O.")
+    }
+
+    override fun mkdirs(path: String) {
+        throw UnsupportedOperationException("SimpleFileSystem cannot perform physical I/O.")
     }
 }

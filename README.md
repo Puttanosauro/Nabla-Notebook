@@ -68,7 +68,7 @@ Because of this everything might be changed going forwards
 
 ### In Progress / Next Steps
 To finish phase 1 we need to:
-* finish the port of of `quarkdown-core` to Kotlin Multiplatform (KMP), missing:
+* finish the port of `quarkdown-core` to Kotlin Multiplatform (KMP), missing:
   * [context](app/shared/src/commonMain/kotlin/org/example/project/qdcore/context)
   * [document](app/shared/src/commonMain/kotlin/org/example/project/qdcore/document)
   * [flavor](app/shared/src/commonMain/kotlin/org/example/project/qdcore/flavor)
