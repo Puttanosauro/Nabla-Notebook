@@ -13,7 +13,7 @@ import org.example.project.qdcore.pipeline.output.OutputResource
  * KMP Expectation: Each platform defines how to synchronously fetch bytes from a URL.
  * (JVM uses java.net.URL or Ktor, Web uses fetch or returns a placeholder).
  */
-expect fun downloadRemoteMediaBytes(url: String): List<Byte>
+expect fun downloadRemoteMediaBytes(url: String): ByteArray
 
 /**
  * A converter of a [Media] to an [OutputResource].
@@ -26,12 +26,12 @@ class MediaOutputResourceConverter(
     override fun visit(media: LocalMedia) =
         FileReferenceOutputArtifact(
             name = name,
-            sourcePath = media.file, // Ensure LocalMedia.file is a String!
-            useChecksumInvalidation = false, // We removed JVM checksums earlier
+            sourcePath = media.filePath,
+            useChecksumInvalidation = false,
         )
 
     override fun visit(media: RemoteMedia) =
-        BinaryOutputArtifact.fromBytes(
+        BinaryOutputArtifact.fromFile(
             name = name,
             bytes = downloadRemoteMediaBytes(media.url)
         )

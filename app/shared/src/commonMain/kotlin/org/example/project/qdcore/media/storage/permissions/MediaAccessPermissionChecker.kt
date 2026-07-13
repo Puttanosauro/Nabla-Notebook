@@ -16,8 +16,9 @@ import org.example.project.qdcore.permissions.requireReadPermission
 class MediaAccessPermissionChecker(
     private val holder: PermissionHolder,
 ) : MediaVisitor<Unit> {
+
     override fun visit(media: LocalMedia) {
-        holder.requireReadPermission(media.file)
+        holder.requireReadPermission(media.filePath)
     }
 
     override fun visit(media: RemoteMedia) {

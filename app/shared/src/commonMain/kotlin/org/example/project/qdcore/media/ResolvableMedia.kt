@@ -1,17 +1,13 @@
 package org.example.project.qdcore.media
 
-import org.example.project.qdcore.util.IOUtils
-import org.example.project.qdcore.util.toURLOrNull
-import java.io.File
-
 /**
  * A generic media that is yet to be resolved to a [Media] subclass.
  * @param path path to the media, either a file or a URL
- * @param workingDirectory directory to resolve the media from, in case the path is relative
+ * @param workingDirectory string path to the directory to resolve the media from, in case the path is relative
  */
 data class ResolvableMedia(
     private val path: String,
-    private val workingDirectory: File? = null,
+    private val workingDirectory: String? = null, // Replaced java.io.File!
 ) : Media {
     /**
      * The resolved media as a [LocalMedia] or [RemoteMedia].
@@ -20,20 +16,25 @@ data class ResolvableMedia(
 
     /**
      * @return [LocalMedia] if the path is a file, [RemoteMedia] if the path is a URL
-     * @throws IllegalArgumentException if the path cannot be resolved or if it is a directory
      */
     private fun resolve(): Media {
-        // If the path is a URL, it is remote.
-        path.toURLOrNull()?.let { return RemoteMedia(it) }
+        // 1. Is it a URL
+        if (RemoteMedia.isValidUrl(path)) {
+            return RemoteMedia(path) // Path is passed as a pure string
+        }
 
-        val file = IOUtils.resolvePath(path, workingDirectory)
+        // 2. It's a local file
+        val resolvedFilePath = if (workingDirectory != null && !path.startsWith("/")) {
+            // If it's a relative path, combine the working directory and the path cleanly
+            val cleanDir = workingDirectory.removeSuffix("/")
+            val cleanPath = path.removePrefix("/")
+            "$cleanDir/$cleanPath"
+        } else {
+            path
+        }
 
-        if (!file.exists()) throw IllegalArgumentException("Media path cannot be resolved: $path")
-        if (file.isDirectory) throw IllegalArgumentException("Media is a directory: $path")
-
-        return LocalMedia(file)
+        return LocalMedia(resolvedFilePath)
     }
 
-    // Delegate to the resolved media.
     override fun <T> accept(visitor: MediaVisitor<T>): T = resolved.accept(visitor)
 }

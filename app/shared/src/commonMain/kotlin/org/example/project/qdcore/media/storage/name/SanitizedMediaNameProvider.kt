@@ -12,15 +12,22 @@ class SanitizedMediaNameProvider : MediaNameProviderStrategy {
     private fun String.sanitize() = this.sanitizeFileName(replacement = "-")
 
     // Local media are given a unique identifier based on their file name and hash code.
-    override fun visit(media: LocalMedia) =
-        buildString {
-            append(media.file.nameWithoutExtension)
+    override fun visit(media: LocalMedia): String {
+        val fileName = media.filePath.substringAfterLast('/') // Gets "image.png"
+        val nameWithoutExtension = fileName.substringBeforeLast('.') // Gets "image"
+        val extension = fileName.substringAfterLast('.', missingDelimiterValue = "") // Gets "png"
+
+        return buildString {
+            append(nameWithoutExtension)
             append("@")
-            append(media.file.hashCode())
-            append(".")
-            append(media.file.extension)
+            append(media.filePath.hashCode()) // hashCode() works natively on Strings!
+            if (extension.isNotEmpty()) {
+                append(".")
+                append(extension)
+            }
         }.sanitize()
+    }
 
     // URLs are already unique, and they don't need an additional identifier.
-    override fun visit(media: RemoteMedia) = media.url.toExternalForm().sanitize()
+    override fun visit(media: RemoteMedia) = media.url.sanitize() // url is already a string!
 }

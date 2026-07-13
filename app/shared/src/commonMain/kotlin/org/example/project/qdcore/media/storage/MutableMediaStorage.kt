@@ -11,7 +11,6 @@ import org.example.project.qdcore.media.storage.permissions.MediaAccessPermissio
 import org.example.project.qdcore.permissions.PermissionHolder
 import org.example.project.qdcore.pipeline.output.OutputResource
 import org.example.project.qdcore.pipeline.output.OutputResourceGroup
-import java.io.File
 
 /**
  * The name of the media subdirectory in the output resources.
@@ -23,8 +22,8 @@ const val MEDIA_SUBDIRECTORY_NAME = "media"
  * @param options storage rules
  * @param permissionHolder holder to check media access permissions against
  * @param nameProvider strategy used to generate media names.
- *                     The name of a media defines the file name in the output directory,
- *                     hence this is the resource the document should refer to (e.g. images).
+ * The name of a media defines the file name in the output directory,
+ * hence this is the resource the document should refer to (e.g. images).
  */
 class MutableMediaStorage(
     options: MediaStorageOptions,
@@ -79,14 +78,15 @@ class MutableMediaStorage(
         // Binding fails if the required permissions to access it aren't granted.
         media.accept(permissionChecker)
 
-        val media =
+        val newStoredMedia =
             StoredMedia(
                 name = media.accept(nameProvider),
                 media = media,
                 storage = this,
             )
 
-        return bindings.putIfAbsent(path, media) ?: media
+        // Idiomatic Kotlin! It gets the existing media, or puts the new one and returns it.
+        return bindings.getOrPut(path) { newStoredMedia }
     }
 
     /**
@@ -110,6 +110,6 @@ class MutableMediaStorage(
      */
     fun register(
         path: String,
-        workingDirectory: File?,
+        workingDirectory: String?,
     ): StoredMedia? = register(path, ResolvableMedia(path, workingDirectory))
 }

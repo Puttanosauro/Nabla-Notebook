@@ -77,7 +77,6 @@ To finish phase 1 we need to:
   * [lexer](app/shared/src/commonMain/kotlin/org/example/project/qdcore/lexer)
   * [localization](app/shared/src/commonMain/kotlin/org/example/project/qdcore/localization)
   * [log](app/shared/src/commonMain/kotlin/org/example/project/qdcore/log)
-  * [media](app/shared/src/commonMain/kotlin/org/example/project/qdcore/media)
   * [misc](app/shared/src/commonMain/kotlin/org/example/project/qdcore/misc)
   * [parser](app/shared/src/commonMain/kotlin/org/example/project/qdcore/parser)
   * [permissions](app/shared/src/commonMain/kotlin/org/example/project/qdcore/permissions)

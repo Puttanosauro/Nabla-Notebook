@@ -1,13 +1,11 @@
 package org.example.project.qdcore.media
 
-import java.io.File
-
 /**
  * A media that lives on the local filesystem.
- * @param file the local file where the media is stored
+ * @param filePath the string path to the local file where the media is stored
  */
 data class LocalMedia(
-    val file: File,
+    val filePath: String,
 ) : Media {
     override fun <T> accept(visitor: MediaVisitor<T>): T = visitor.visit(this)
 }
